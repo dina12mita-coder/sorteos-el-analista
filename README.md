@@ -96,6 +96,13 @@ están versionadas en este repo: créalas en el dashboard o con `supabase db pus
 
 Para vincular tu dominio: **Project → Settings → Domains** y añade el dominio.
 
+### Producción actual
+
+- **App:** https://sorteos-el-analista.vercel.app
+- **Repo:** https://github.com/dina12mita-coder/sorteos-el-analista
+- **Supabase:** proyecto `Rifa management app` (`emjnqrldgkimthkwlnow`) — el login del panel
+  se configura con `APP_USUARIO` / `APP_PASSWORD` en las variables de entorno de Vercel.
+
 Comandos útiles:
 
 ```sh
