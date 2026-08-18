@@ -1,0 +1,169 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-royal: var(--royal);
+  --color-marquee: var(--marquee);
+  --color-estado-disponible: var(--estado-disponible);
+  --color-estado-abono: var(--estado-abono);
+  --color-estado-pagado: var(--estado-pagado);
+}
+
+:root,
+.dark {
+  --radius: 0.75rem;
+
+  --background: oklch(0.17 0.006 60);
+  --foreground: oklch(0.97 0.008 90);
+  --card: oklch(0.215 0.008 60);
+  --card-foreground: oklch(0.97 0.008 90);
+  --popover: oklch(0.2 0.008 60);
+  --popover-foreground: oklch(0.97 0.008 90);
+
+  --primary: oklch(0.83 0.145 84);
+  --primary-foreground: oklch(0.2 0.03 70);
+  --secondary: oklch(0.28 0.012 60);
+  --secondary-foreground: oklch(0.96 0.008 90);
+  --muted: oklch(0.26 0.01 60);
+  --muted-foreground: oklch(0.73 0.015 80);
+  --accent: oklch(0.55 0.2 27);
+  --accent-foreground: oklch(0.98 0.01 90);
+  --destructive: oklch(0.58 0.215 27);
+  --destructive-foreground: oklch(0.98 0.01 90);
+
+  --border: oklch(0.34 0.03 75);
+  --input: oklch(0.3 0.02 70);
+  --ring: oklch(0.83 0.145 84);
+
+  --chart-1: oklch(0.83 0.145 84);
+  --chart-2: oklch(0.58 0.215 27);
+  --chart-3: oklch(0.72 0.15 150);
+  --chart-4: oklch(0.6 0.12 250);
+  --chart-5: oklch(0.75 0.05 80);
+
+  --sidebar: oklch(0.2 0.008 60);
+  --sidebar-foreground: oklch(0.96 0.008 90);
+  --sidebar-primary: oklch(0.83 0.145 84);
+  --sidebar-primary-foreground: oklch(0.2 0.03 70);
+  --sidebar-accent: oklch(0.28 0.012 60);
+  --sidebar-accent-foreground: oklch(0.96 0.008 90);
+  --sidebar-border: oklch(0.34 0.03 75);
+  --sidebar-ring: oklch(0.83 0.145 84);
+
+  /* Marca Sorteos El Analista — Los Favoritos */
+  --gold: oklch(0.83 0.145 84);
+  --gold-deep: oklch(0.68 0.135 62);
+  --royal: oklch(0.42 0.15 265);
+  --marquee: oklch(0.58 0.215 27);
+
+  --estado-disponible: oklch(0.72 0.02 80);
+  --estado-abono: oklch(0.83 0.145 84);
+  --estado-pagado: oklch(0.72 0.17 150);
+
+  --gradient-gold: linear-gradient(
+    180deg,
+    oklch(0.92 0.11 92) 0%,
+    oklch(0.83 0.15 84) 45%,
+    oklch(0.66 0.14 60) 100%
+  );
+  --gradient-felt: radial-gradient(
+    120% 90% at 50% 0%,
+    oklch(0.26 0.02 60) 0%,
+    oklch(0.15 0.006 60) 70%
+  );
+  --glow-gold: 0 0 0 1px oklch(0.83 0.145 84 / 0.45), 0 0 18px oklch(0.83 0.145 84 / 0.28);
+  --glow-pagado: 0 0 0 1px oklch(0.72 0.17 150 / 0.55), 0 0 18px oklch(0.72 0.17 150 / 0.3);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    background-image: var(--gradient-felt);
+    background-attachment: fixed;
+    color: var(--color-foreground);
+    font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: 0.02em;
+  }
+}
+
+@utility text-gold {
+  color: var(--gold);
+}
+
+@utility bg-gold-plate {
+  background-image: var(--gradient-gold);
+  color: oklch(0.2 0.03 70);
+}
+
+@utility marquee-frame {
+  border: 2px solid var(--gold);
+  box-shadow: var(--glow-gold);
+}
