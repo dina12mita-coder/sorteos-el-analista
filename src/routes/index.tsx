@@ -9,6 +9,7 @@ import cartonAsset from "@/assets/numeros.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CartonNumeros, Leyenda } from "@/components/rifa/CartonNumeros";
+import { FiltroEstados, type FiltroEstado } from "@/components/rifa/FiltroEstados";
 import { PanelEstadisticas } from "@/components/rifa/PanelEstadisticas";
 import { HistorialBoletos } from "@/components/rifa/HistorialBoletos";
 import { HistorialAuditoria } from "@/components/rifa/HistorialAuditoria";
@@ -46,6 +47,7 @@ function ControlDeBoletos() {
   const { usuario } = Route.useLoaderData();
   const [seleccion, setSeleccion] = useState<number | null>(null);
   const [busqueda, setBusqueda] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>("TODOS");
   const [descargando, setDescargando] = useState(false);
 
   const { data: boletos = [] } = useQuery({ queryKey: ["boletos"], queryFn: listarBoletos });
@@ -108,10 +110,31 @@ function ControlDeBoletos() {
     return s;
   }, [q, porNumero]);
 
-  const historial = useMemo(
-    () => (coincidencias ? filas.filter((f) => coincidencias.has(f.boleto.numero)) : filas),
-    [filas, coincidencias],
-  );
+  // Números del estado seleccionado (null = todos los estados).
+  const porEstado = useMemo(() => {
+    if (filtroEstado === "TODOS") return null;
+    const s = new Set<number>();
+    for (const f of filas) if (f.resumen.estado === filtroEstado) s.add(f.boleto.numero);
+    return s;
+  }, [filas, filtroEstado]);
+
+  // Resaltado del cartón: combina la búsqueda con el filtro por estado.
+  const resaltados = useMemo(() => {
+    if (!coincidencias && !porEstado) return null;
+    if (coincidencias && porEstado) {
+      const s = new Set<number>();
+      for (const n of coincidencias) if (porEstado.has(n)) s.add(n);
+      return s;
+    }
+    return coincidencias ?? porEstado;
+  }, [coincidencias, porEstado]);
+
+  const historial = useMemo(() => {
+    let fs = filas;
+    if (coincidencias) fs = fs.filter((f) => coincidencias.has(f.boleto.numero));
+    if (porEstado) fs = fs.filter((f) => porEstado.has(f.boleto.numero));
+    return fs;
+  }, [filas, coincidencias, porEstado]);
 
   const onSalir = async () => {
     await queryClient.cancelQueries();
@@ -176,10 +199,11 @@ function ControlDeBoletos() {
             />
           </div>
           <Leyenda />
+          <FiltroEstados filas={filas} filtro={filtroEstado} onChange={setFiltroEstado} />
         </aside>
 
         <section className="rounded-xl border border-gold/40 bg-black/45 p-3 sm:p-5">
-          <CartonNumeros filas={porNumero} resaltados={coincidencias} onSelect={setSeleccion} />
+          <CartonNumeros filas={porNumero} resaltados={resaltados} onSelect={setSeleccion} />
         </section>
       </div>
 

@@ -2,12 +2,12 @@ import numerosAsset from "@/assets/numeros.png";
 import { pad2 } from "./rifa";
 
 /**
- * Carton publico 00-99 sobre la plantilla oficial (1100 x 1600).
+ * Carton publico 00-99 sobre la plantilla oficial (1100 x 1679).
  * Para el publico solo existen dos estados: DISPONIBLE u OCUPADO.
  * Cualquier numero apartado o con algun abono se marca OCUPADO.
  */
 const W = 1100;
-const ARTE_H = 1600;
+const ARTE_H = 1679;
 const LEYENDA_H = 190;
 const H = ARTE_H + LEYENDA_H;
 
@@ -63,49 +63,22 @@ function marcarOcupado(ctx: CanvasRenderingContext2D, n: number) {
   ctx.strokeStyle = "rgba(255,255,255,0.85)";
   ctx.stroke();
 
-  ctx.font = '900 34px Montserrat, "Arial Black", sans-serif';
+  // El numero del puesto va encima del circulo rojo.
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  ctx.font = '900 40px Montserrat, "Arial Black", sans-serif';
+  ctx.shadowColor = "rgba(0,0,0,0.6)";
+  ctx.shadowBlur = 5;
+  ctx.shadowOffsetY = 2;
   ctx.fillStyle = BLANCO;
-  ctx.fillText(pad2(n), x, y + 2);
+  ctx.fillText(pad2(n), x, y + 1);
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
 }
 
-const VERDE_WA = "#25d366";
-
-function iconoWhatsApp(ctx: CanvasRenderingContext2D, x: number, y: number, r = 15) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fillStyle = VERDE_WA;
-  ctx.fill();
-  ctx.font = '900 15px Montserrat, "Arial Black", sans-serif';
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = BLANCO;
-  ctx.fillText("WA", x, y + 1);
-}
-
-function contacto(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  numero: string,
-  nombre: string,
-) {
-  iconoWhatsApp(ctx, x, y);
-  ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-  ctx.font = '800 22px Montserrat, "Arial Black", sans-serif';
-  ctx.fillStyle = BLANCO;
-  ctx.fillText(numero, x + 24, y);
-  const wNum = ctx.measureText(numero).width;
-  ctx.font = '800 18px Montserrat, "Arial Black", sans-serif';
-  ctx.fillStyle = ORO;
-  ctx.fillText("  ·  RESPONSABLE: ", x + 24 + wNum, y);
-  const wLab = ctx.measureText("  ·  RESPONSABLE: ").width;
-  ctx.fillStyle = BLANCO;
-  ctx.fillText(nombre, x + 24 + wNum + wLab, y);
-}
-
+// Los contactos (WhatsApp + responsables) ya vienen en la plantilla oficial;
+// la banda inferior solo agrega la leyenda y el contador.
 function leyenda(ctx: CanvasRenderingContext2D, ocupados: number) {
   ctx.fillStyle = "#050508";
   ctx.fillRect(0, ARTE_H, W, LEYENDA_H);
@@ -149,9 +122,6 @@ function leyenda(ctx: CanvasRenderingContext2D, ocupados: number) {
   ctx.moveTo(36, ARTE_H + 84);
   ctx.lineTo(W - 36, ARTE_H + 84);
   ctx.stroke();
-
-  contacto(ctx, 60, ARTE_H + 120, "+57 301 8482802", "GERSON MALDONADO");
-  contacto(ctx, 60, ARTE_H + 162, "+58 424-7603087", "JESÚS VALERO");
 }
 
 export async function renderCarton(ocupados: Iterable<number>): Promise<HTMLCanvasElement> {
