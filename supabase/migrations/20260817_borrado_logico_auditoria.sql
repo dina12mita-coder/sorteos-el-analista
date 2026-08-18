@@ -58,9 +58,18 @@ CREATE TABLE IF NOT EXISTS public.auditoria (
 CREATE INDEX IF NOT EXISTS auditoria_boleto_idx ON public.auditoria (boleto_id);
 CREATE INDEX IF NOT EXISTS auditoria_created_idx ON public.auditoria (created_at DESC);
 
--- 4) Realtime para la auditoría (opcional: actualización en vivo del panel)
+-- 4) Realtime: publicar boletos, pagos y auditoría para que el cartón y el
+--    historial se actualicen en vivo entre dispositivos.
 DO $$
 BEGIN
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.boletos;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.pagos;
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END;
   BEGIN
     ALTER PUBLICATION supabase_realtime ADD TABLE public.auditoria;
   EXCEPTION WHEN duplicate_object THEN NULL;
