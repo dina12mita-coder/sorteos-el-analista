@@ -302,7 +302,24 @@ export function BoletoDialog({ numero, fila, onClose, onChanged, usuario }: Prop
     }
   };
 
-  /** Envía el comprobante + mensaje oficial por WhatsApp al teléfono registrado. */
+  /** Abre un enlace externo en pestaña nueva (más confiable que window.open). */
+  const abrirEnlace = (url: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  /**
+   * Envía por WhatsApp al número registrado:
+   * 1) abre el chat del número con el mensaje oficial y el nombre (wa.me).
+   * 2) entrega el comprobante PNG para adjuntarlo: share nativo en móvil o
+   *    descarga en escritorio (WhatsApp no permite adjuntar imagen a un chat
+   *    específico desde un enlace web).
+   */
   const whatsapp = async () => {
     const tel = (telefono || boleto?.telefono || "").replace(/\D/g, "");
     if (!tel) {
@@ -315,6 +332,10 @@ export function BoletoDialog({ numero, fila, onClose, onChanged, usuario }: Prop
       return;
     }
     const mensaje = mensajeWhatsApp(nombreFinal);
+    // 1) Chat directo del número registrado con el mensaje ya escrito.
+    abrirEnlace(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`);
+
+    // 2) Comprobante listo para adjuntar en ese chat.
     try {
       const blob = await comprobanteBlob(datosComprobante);
       const file = new File(
@@ -322,24 +343,16 @@ export function BoletoDialog({ numero, fila, onClose, onChanged, usuario }: Prop
         nombreArchivo({ numero: datosComprobante.numero, nombre: datosComprobante.nombre }),
         { type: "image/png" },
       );
-      // En móvil, el share nativo adjunta la imagen y WhatsApp aparece en la hoja.
       if (navigator.canShare?.({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            text: mensaje,
-            title: `Boleto ${pad2(datosComprobante.numero)}`,
-          });
-          return;
-        } catch (e) {
-          if ((e as Error)?.name === "AbortError") return; // cancelado por el usuario
-        }
+        await navigator.share({ files: [file] });
+        return;
       }
     } catch {
-      /* si falla el comprobante, se abre WhatsApp igual con el mensaje */
+      return; // share cancelado o no soportado: el chat ya quedó abierto
     }
-    // Escritorio: abre el chat del número con el mensaje ya escrito.
-    window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, "_blank");
+    // Escritorio: descarga el PNG para adjuntarlo al chat abierto.
+    await descargar();
+    toast.success("Chat de WhatsApp abierto: adjunta el PNG descargado al mensaje");
   };
 
   return (
@@ -599,7 +612,7 @@ export function BoletoDialog({ numero, fila, onClose, onChanged, usuario }: Prop
                       ? "Genera primero el comprobante para activar el envío"
                       : !telefono.trim()
                         ? "Registra el teléfono del participante para enviar por WhatsApp"
-                        : "Enviar mensaje y comprobante por WhatsApp"
+                        : "Abrir el chat del número con el mensaje y el comprobante"
                   }
                   className="bg-[#25D366] text-black hover:bg-[#1fbd5a]"
                 >
