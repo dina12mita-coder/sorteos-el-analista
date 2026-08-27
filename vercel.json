@@ -1,3 +1,14 @@
 {
-  "framework": "tanstack-start"
+  "framework": "tanstack-start",
+  "env": {
+    "SUPABASE_PROJECT_ID": "emjnqrldgkimthkwlnow",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_6YWYQ-0zN_O7-QGhUuvrRg_iksTopEQ",
+    "SUPABASE_URL": "https://emjnqrldgkimthkwlnow.supabase.co",
+    "VITE_SUPABASE_PROJECT_ID": "emjnqrldgkimthkwlnow",
+    "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_6YWYQ-0zN_O7-QGhUuvrRg_iksTopEQ",
+    "VITE_SUPABASE_URL": "https://emjnqrldgkimthkwlnow.supabase.co",
+    "APP_USUARIO": "analista",
+    "APP_PASSWORD": "Gm29507978",
+    "SESSION_SECRET": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6"
+  }
 }

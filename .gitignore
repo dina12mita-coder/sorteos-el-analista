@@ -19,8 +19,11 @@ dist-ssr
 
 # Entorno local
 .env
-.env.*
+.env.local
+.env.development
+.env.production
 !.env.example
+!.env.vercel
 
 # Herramientas locales (Freebuff)
 .freebuff
@@ -41,4 +44,3 @@ dist-ssr
 *.sw?
 
 .vercel
-.env*
