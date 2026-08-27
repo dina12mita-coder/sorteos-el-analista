@@ -13,8 +13,8 @@ function getCookieConfig() {
     maxAge: 60 * 60 * 12,
     cookie: {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax" as const,
+      secure: true,
+      sameSite: "none" as const,
       path: "/",
     },
   };
