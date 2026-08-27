@@ -126,3 +126,5 @@ supabase/migrations/ # SQL de base de datos
 
 Los diseños de cartón y comprobante son los **materiales oficiales de la rifa** y no deben
 rediseñarse: la app solo sobrepone los datos dinámicos (número, participante, abonos).
+
+
