@@ -17,7 +17,7 @@ import { BoletoDialog } from "@/components/rifa/BoletoDialog";
 import { listarBoletos, listarPagos, pad2, resumenDe, sumaPagos, type Pago } from "@/lib/rifa";
 import type { Fila } from "@/lib/fila";
 import { cartonBlob, nombreCarton } from "@/lib/carton";
-import { cerrarSesion, requerirSesion } from "@/lib/sesion.functions";
+import { cerrarSesion, requerirSesion, hasSessionCookie, clearSessionCookie } from "@/lib/sesion.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -46,6 +46,13 @@ function ControlDeBoletos() {
   const salir = useServerFn(cerrarSesion);
   const { usuario } = Route.useLoaderData();
   const [seleccion, setSeleccion] = useState<number | null>(null);
+
+  // Client-side session guard
+  useEffect(() => {
+    if (!hasSessionCookie()) {
+      router.navigate({ to: "/login", replace: true });
+    }
+  }, [router]);
   const [busqueda, setBusqueda] = useState("");
   const [filtroEstado, setFiltroEstado] = useState<FiltroEstado>("TODOS");
   const [descargando, setDescargando] = useState(false);
@@ -139,6 +146,7 @@ function ControlDeBoletos() {
   const onSalir = async () => {
     await queryClient.cancelQueries();
     queryClient.clear();
+    clearSessionCookie();
     await salir({ data: undefined });
     await router.navigate({ to: "/login", replace: true });
   };

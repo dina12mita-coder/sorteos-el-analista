@@ -7,7 +7,7 @@ import cartonAsset from "@/assets/numeros.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { iniciarSesion } from "@/lib/sesion.functions";
+import { iniciarSesion, setSessionCookie } from "@/lib/sesion.functions";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -42,8 +42,12 @@ function Login() {
     setError("");
     try {
       const { ok } = await entrar({ data: { usuario, password } });
-      if (ok) await router.navigate({ to: "/" });
-      else setError("Usuario o contraseña incorrectos.");
+      if (ok) {
+        setSessionCookie();
+        await router.navigate({ to: "/" });
+      } else {
+        setError("Usuario o contraseña incorrectos.");
+      }
     } catch {
       setError("Usuario o contraseña incorrectos.");
     } finally {
