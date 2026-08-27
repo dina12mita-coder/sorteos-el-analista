@@ -4,13 +4,11 @@ import { redirect } from "@tanstack/react-router";
 
 type SesionData = { usuario?: string };
 
-const AUTH_USER = "analista";
-const AUTH_PASS = "Gm29507978";
-const SECRET = "sorteos-secret-key-2024-prod";
+const SESSION_SECRET = "sorteos-analista-2026-prod-key-abc123";
 
-function sessCfg() {
+function getCookieConfig() {
   return {
-    password: SECRET,
+    password: SESSION_SECRET,
     name: "sorteos-sesion",
     maxAge: 60 * 60 * 12,
     cookie: {
@@ -25,49 +23,31 @@ function sessCfg() {
 export const iniciarSesion = createServerFn({ method: "POST" })
   .inputValidator((data: { usuario: string; password: string }) => data)
   .handler(async ({ data }) => {
-    const user = (data?.usuario ?? "").trim().toLowerCase();
-    const pass = data?.password ?? "";
+    const ok =
+      data.usuario === "analista" && data.password === "Gm29507978";
 
-    if (user === AUTH_USER && pass === AUTH_PASS) {
-      try {
-        const s = await useSession<SesionData>(sessCfg());
-        await s.update({ usuario: AUTH_USER });
-      } catch (e) {
-        // session errors ignored
-      }
-      return { ok: true as const };
+    if (!ok) {
+      return { ok: false as const };
     }
 
-    return { ok: false as const };
+    const session = await useSession<SesionData>(getCookieConfig());
+    await session.update({ usuario: "analista" });
+    return { ok: true as const };
   });
 
 export const cerrarSesion = createServerFn({ method: "POST" }).handler(async () => {
-  try {
-    const s = await useSession<SesionData>(sessCfg());
-    await s.clear();
-  } catch (e) {
-    // ignore
-  }
+  const session = await useSession<SesionData>(getCookieConfig());
+  await session.clear();
   return { ok: true as const };
 });
 
 export const requerirSesion = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const s = await useSession<SesionData>(sessCfg());
-    if (s.data.usuario) {
-      return { usuario: s.data.usuario };
-    }
-  } catch (e) {
-    // ignore
-  }
-  throw redirect({ to: "/login" });
+  const session = await useSession<SesionData>(getCookieConfig());
+  if (!session.data.usuario) throw redirect({ to: "/login" });
+  return { usuario: session.data.usuario };
 });
 
 export const sesionActiva = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const s = await useSession<SesionData>(sessCfg());
-    return { activa: Boolean(s.data.usuario) };
-  } catch {
-    return { activa: false };
-  }
+  const session = await useSession<SesionData>(getCookieConfig());
+  return { activa: Boolean(session.data.usuario) };
 });
